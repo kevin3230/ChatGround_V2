@@ -1,0 +1,16 @@
+	label.xrequired:before {
+		content: "*";
+		color: red;
+	}
+
+	.warn{
+		color:red;
+	}
+
+	#account_hint {
+		margin: 0;
+	}
+
+	#email_hint {
+		margin: 0;
+	}

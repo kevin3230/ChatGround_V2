@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"
+xmlns:sec="http://www.thymeleaf.org/thmeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<title>ChatGround</title>
+<link rel="stylesheet" th:href="@{/utility/css/bootstrap.min.css}" href="../utility/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" th:href="@{/css/NavBar.css}" href="../css/NavBar.css">
+<link rel="stylesheet" th:href="@{/css/MembersSignIn.css}" href="../css/MembersSignIn.css">
+</head>
+<body>
+	<div th:replace="~{index/NavBar :: navBar}"/>
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-10">
+				<div class="row justify-content-center">
+					<div th:if="${param.error}" class="col-12 row justify-content-center">
+						<p class="text-danger">*帳號或密碼錯誤</p>
+					</div>
+					<div>
+						<form th:action="@{/member/login}" method="post" id="signIn">
+							<table>
+								<thead>
+									<tr>
+										<th colspan="2" style="text-align:center;">會員登入</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<th>帳號</th>
+										<td><input type="text" name="uname"></td>
+									</tr>
+									<tr>
+										<th>密碼</th>
+										<td><input type="password" name="pwd"></td>
+									</tr>
+								</tbody>
+							</table>
+							<input class="i-checks" type="checkbox" name="rememberme"> 記住我
+						</form>
+					</div>
+				</div>
+				<div class="row justify-content-center">
+					<a th:href="@{/member/signup}" href="/member/signup">註冊會員</a>
+					<button type="submit" form="signIn">登入</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script th:src="@{/utility/js/jquery-3.5.1.min.js}" src="../utility/js/jquery-3.5.1.min.js"></script>
+    <script th:src="@{/utility/js/popper.min.js}" src="../utility/js/popper.min.js"></script>
+    <script th:src="@{/utility/js/bootstrap.min.js}" src="../utility/js/bootstrap.min.js"></script>
+</body>
+</html>

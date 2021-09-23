@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>聊天廣場</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <style type="text/css">
+        * {
+            border: red solid 2px;
+        }
+        body {
+            background-color: black;
+            color: white;
+        }
+        textarea {
+            resize: none;
+        }
+        #text_submit {
+            position: relative;
+            float: none;
+            height: auto;
+            width: auto;
+        }
+        #title {
+            float: none;
+            display: block;
+            text-align: center;
+        }
+        #messagesArea {
+            display: inline-block;
+            border: cyan solid 2px;
+            height: 15em;
+        }
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 px-0 py-0 row justify-content-center">
+                <div class=" col-10 bg-dark text-white my-0" id="title">
+                    聊天廣場
+                </div>
+                <div class="col-10 overflow-auto mx-0 my-0 px-0 py-0" id="messagesArea">
+                    <ul id="area">
+                        <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil, exercitationem quas dicta adipisci ex hic atque vel suscipit, quasi vero animi, earum incidunt illo natus quaerat veniam dolores numquam modi?Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi amet quaerat rem, praesentium, cumque, consectetur at dolores suscipit necessitatibus mollitia, molestias soluta magni ullam? Fugiat nulla quis doloribus. Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ut quisquam alias laborum, excepturi maxime facere nesciunt eveniet animi dignissimos voluptatibus corrupti ullam suscipit qui, autem id illo perspiciatis? Accusantium, consequatur?</li>
+                    </ul>
+                </div>
+                <div class="col-10 px-0">
+                    <textarea class="form-control col-9 float-left" rows="1" placeholder="請輸入文字"></textarea>
+                    <button class="btn btn-secondary col-auto mx-1 my-0" id="text_submit">發送</button>
+                </div>
+                <div class="col-10 row px-0">
+                    <div class="col-4 mx-0 px-0">
+                        <h6>現在線上人數：<span id="onlineCounter"></span></h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        var myPoint = "/${sessionScope.memberVO_memNo}";
+        var host = window.location.host;
+        var path = window.location.pathname;
+        var webCtx = path.substring(0, path.indexOf("/", 1));
+        var endPointURL = "ws://" + host + webCtx + myPoint;
+        // console.log(host); //協定名稱+port阜號
+        // console.log(path); //context到之後的url
+        // console.log(webCtx); //substing取出context名稱
+
+        var self = "${sessionScope.memberVO_memNo}";
+        var webSocket;
+
+        //建立websockt連線
+        function connect() {
+            webSocket = new WebSocket(endPointURL);
+
+            webSocket.onopen = function(event) {
+                console.log("Connect Success!");
+                //document.getElementById('area').innerHTML = ''; //清空對話框
+                $("#area").html(""); //清空對話框
+                // var li = document.createElement("li");
+                // li.append("歡迎來到聊天廣場，在這裡可以暢所欲言");
+                // document.getElementById('area').appendChild(li);
+                $("#area").append($("<li>").text("歡迎來到聊天廣場，在這裡可以暢所欲言"));
+                // document.getElementById('text_submit').disabled = false;
+                $("#text_submit").prop("disabled", false);
+            }
+
+            webSocket.onmessage = function(event) {
+                var jsonObj = JSON.parse(event.data);
+                if ("chat" === jsonObj.type) {
+                    // var li = document.createElement("li");
+                    // li.append(jsonObj.sender + jsonObj.message);
+                    // document.getElementById('area').append(li);
+                    $("#area").append($("<li>").text(jsonObj.sender + jsonObj.message));
+                    $("#onlineCounter").text(jsonObj.onlineCounter);
+                    scrollBottom();
+                }
+
+
+            }
+
+            webSocket.onclose = function(event) {
+                console.log("disconnect");
+            }
+
+            webSocket.onerror = function(event) {
+                // var area = document.getElementById('area');
+                // var li = document.createElement("li");
+                // li.append("連線失敗");
+                // area.appendChild(li);
+                $("#area").append($("<li>").text("連線失敗"));
+                scrollBottom();
+            }
+        }
+
+        function sendMessage() {
+            var textarea = $("textarea");
+            var receiver = "chatground";
+            var message = textarea.val().trim();
+
+            if ("" === message) {
+                textarea.focus();
+            } else {
+                var jsonObj = {
+                    "type": "chat",
+                    "sender": self,
+                    "receiver": receiver,
+                    "message": message
+                };
+                webSocket.send(JSON.stringify(jsonObj));
+
+            }
+            textarea.val("");
+            textarea.focus();
+
+        }
+
+        function scrollBottom() {
+            //對話框滾軸置底
+            var messagesArea = document.getElementById('messagesArea');
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+        }
+
+        function disconnect() {
+            webSocket.close();
+            // document.getElementById('text_submit').disabled = true;
+            $("#text_submit").prop("disabled", true);
+        }
+
+        function addListener() {
+            $("#text_submit").click(sendMessage);
+            $("textarea").keyup(function(event) {
+                //判斷組合鍵,不是shift+enter就改寫enter的默認功能
+                if (!event.shiftKey && event.keyCode === 13) {
+                    sendMessage();
+                }
+            });
+
+
+        }
+
+        // window.onload = function() {
+        //     // var area = document.getElementById('area');
+        //     // var li = document.createElement("li");
+        //     // li.append("連線中...");
+        //     // area.appendChild(li);
+        //     $("#area").append($("<li>").text("連線中..."));
+        //     scrollBottom();
+        //     connect();
+        // }
+        $(document).ready(function() {
+            $("#text_submit").prop("disabled", true);
+            $("#area").append($("<li>").text("連線中..."));
+            scrollBottom();
+            addListener();
+            connect();
+        });
+        window.onunload = function() {
+            disconnect();
+        }
+    </script>
+</body>
+
+</html>
