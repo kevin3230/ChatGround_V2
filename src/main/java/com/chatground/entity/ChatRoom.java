@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * 此表格尚未用到
  * 聊天室
  */
 @Entity
@@ -43,7 +44,7 @@ public class ChatRoom {
      * 聊天訊息
      */
     @OneToMany
-    @JoinColumn(name = "cr_id")
+    @JoinColumn(name = "chatroom_id")
     private List<Message> messageList;
 
     /**

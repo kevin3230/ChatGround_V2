@@ -21,7 +21,7 @@ public class testMemberRepository {
     @Autowired
     private MemberRepository memberRepository;
 
-    Member member;
+    private Member member;
 
     @Before
     public void before(){
@@ -38,35 +38,16 @@ public class testMemberRepository {
 
     }
 
-
     @Test
     public void testSave(){
-
-//        member = Member.builder()
-//                .account("account1")
-//                .password("123456")
-//                .nickName("first 1")
-//                .email("123@abc.com")
-//                .gender("X")
-//                .status("active")
-//                .role("user")
-//                .build();
-//        System.out.println(member);
         memberRepository.save(member);
-    }
-
-    @Test
-    public void testFindAll(){
-        List<Member> memberList = memberRepository.findAll();
-        for(Member member : memberList){
-            System.out.println(member);
-        }
     }
 
     @Test
     public void testFindByAccount(){
         Member user = memberRepository.findByAccount("account1");
-        System.out.println(user);
+
+        //顯示會員角色
         for(GrantedAuthority authority : user.getAuthorities()){
             System.out.println(authority.getAuthority());
         }

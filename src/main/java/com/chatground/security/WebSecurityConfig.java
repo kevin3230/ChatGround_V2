@@ -36,20 +36,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception{
         http.formLogin().usernameParameter("uname").passwordParameter("pwd")
-                .loginPage("/member/login").permitAll().defaultSuccessUrl("/index")
+                .loginPage("/member/login").defaultSuccessUrl("/index").failureUrl("/member/login?error")
                 .and()
                 .authorizeRequests()
                 .antMatchers("/css/**", "/js/**", "/utility/**").permitAll()
+                .antMatchers("/member/login").permitAll()
+                .antMatchers("/member/logout_confirm").permitAll()
                 .antMatchers("/member/signup").permitAll()
                 .antMatchers("/member/result").permitAll()
                 .antMatchers("/member/checkAccountAndEmail").permitAll()
 //                .antMatchers("/member/**").hasAnyRole("USER", "ADMIN")
                 .antMatchers("/member/**").access("@rbacService.hasPermission(request, authentication)")
+                .antMatchers("/chatground/**").access("@rbacService.hasPermission(request, authentication)")
                 .antMatchers("/index", "/", "/favicon.ico").permitAll()
                 .antMatchers("/redis/**").permitAll()
                 //除上面外的所有請求全部需要驗證認證
                 .anyRequest().authenticated();
-        http.logout().permitAll().deleteCookies("JSESSIONID").logoutUrl("/member/logout").logoutSuccessUrl("/index");//成功登出後跳轉至哪個頁面
+        http.logout().deleteCookies("JSESSIONID").logoutUrl("/member/logout").permitAll().logoutSuccessUrl("/index");//成功登出後跳轉至哪個頁面
 
 
         //處理例外，拒絕造訪就重新導向到403頁面
@@ -58,7 +61,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         //設定開啟CSRF保護預防攻擊
 //        http.csrf().ignoringAntMatchers("/member/upload");
-        http.csrf().disable();
+//        http.csrf().disable();
     }
 
     @Bean

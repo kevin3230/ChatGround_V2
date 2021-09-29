@@ -12,11 +12,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addViewController("/").setViewName("index/index");
         registry.addViewController("/index").setViewName("index/index");
         registry.addViewController("/member/login").setViewName("member/MembersSignIn");
-//        registry.addViewController("/member/signup").setViewName("member/MembersSignUp");
-        registry.addViewController("/member/test").setViewName("chatground/test");
+        registry.addViewController("/member/logout_confirm");
 
     }
 
+    //開放靜態資源存取
 //    @Override
 //    public void addResourceHandlers(ResourceHandlerRegistry registry){
 //        if (!registry.hasMappingForPattern("/css/**")) {

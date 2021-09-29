@@ -21,6 +21,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Controller
+@RequestMapping("/member")
 public class MemberController {
 
     @Autowired
@@ -30,19 +31,19 @@ public class MemberController {
     @Autowired
     SysRoleRepository sysRoleRepository;
 
-    @GetMapping("/member/signup")
+    @GetMapping("/signup")
     public String signUpForm(Model model, Member member){
         model.addAttribute("member", member);
         return "member/MembersSignUp";
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/member/signup")
+    @RequestMapping(method = RequestMethod.POST, value = "/signup")
     public String signUp(@Valid Member member, BindingResult bindingResult, RedirectAttributes attr){
         if(bindingResult.hasErrors()){
             return "member/MembersSignUp";
         }
 
-        System.out.println(member);
+//        System.out.println(member);
 
         PasswordEncoder pwEncoder = new BCryptPasswordEncoder();
         member.setPassword(pwEncoder.encode(member.getPassword()));
@@ -54,13 +55,13 @@ public class MemberController {
         return "redirect:/member/result";
     }
 
-    @GetMapping("/member/result")
+    @GetMapping("/result")
     public String result(){
         return "member/result";
     }
 
     @ResponseBody
-    @PostMapping("/member/checkAccountAndEmail")
+    @PostMapping("/checkAccountAndEmail")
     public String checkAccountAndEmail(@RequestBody MultiValueMap<String, String> map) throws Exception{
 
         ObjectMapper mapper = new ObjectMapper();

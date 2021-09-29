@@ -2,20 +2,28 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
-    <meta charset="UTF-8">
-    <title>result</title>
+    <meta charset="utf-8">
+    <title>ChatGround</title>
     <link rel="stylesheet" th:href="@{/utility/css/bootstrap.min.css}" href="../utility/css/bootstrap.min.css">
     <link rel="stylesheet" th:href="@{/css/NavBar.css}" href="../css/NavBar.css">
     <link rel="shortcut icon" th:href="@{/favicon.ico}" href="../../favicon.ico" />
+    <style type="text/css">
+        * {
+            border: red;
+        }
+    </style>
 </head>
 <body>
     <div th:replace="~{index/NavBar :: navBar}" />
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-10">
-                <div th:each="member: ${member}">
-                    <span th:text="${member.nickName}">名字</span>(先生/女士) 註冊會員成功
-                </div>
+        <div class="row justify-content-center align-items-center pb-5" style="height: 80vh">
+            <div class="h-40"></div>
+            <div class="align-items-center h-40">
+                <span>確定登出嗎?</span>
+                    <form th:action="@{/member/logout}" method="post">
+                        <button type="submit">登出</button>
+    <!--                  	<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">-->
+                    </form>
             </div>
         </div>
     </div>

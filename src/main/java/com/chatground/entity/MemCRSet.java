@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 
 /**
+ * 此表格尚未用到
  * 會員聊天室對應
  */
 @Entity

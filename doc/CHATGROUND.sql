@@ -1,3 +1,19 @@
+--表格建好後執行下列sql
+--#sys_role
+insert into `sys_role` ( `id`, `cn_name`, `role`, `available`, `description`) values(1, 'admin', 'ROLE_ADMIN', 1 , null);
+insert into `sys_role` (`id`, `cn_name`, `role`, `available`) values(2, 'user', 'ROLE_USER', 1);
+
+--#sys_permission
+insert into `sys_permission` (`id`, `available`, `name`, `parent_id`, `parent_ids`, `permission`, `resource_type`, `url`)
+values(1, 1, '/chatground/ground', 0, null, 'ground', 'menu', '/chatground/ground');
+--#sys_role_permission
+insert into `sys_role_permission` (`role_id`, `permission_id`) values(1, 1);
+insert into `sys_role_permission` (`role_id`, `permission_id`) values(2, 1);
+
+--#member_sysrole  有利用testMemberRepository.testSave新增會員才執行這行
+insert into `member_sysrole` (`mem_id`, `role_id`) values(1, 1);
+
+-- 此script僅當參考用,使用spring.jpa.hibernate.ddl-auto=update 自動建立表格
 DROP TABLE MESSAGE;
 DROP TABLE MEMCRSET;
 DROP TABLE CHATROOM;

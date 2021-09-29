@@ -27,7 +27,7 @@ public class RbacServiceImpl implements RbacService{
     public boolean hasPermission(HttpServletRequest request, Authentication authentication){
         Object principal = authentication.getPrincipal();
         boolean hasPermission = false;
-        System.out.println("request.uri : " + request.getRequestURI());
+//        System.out.println("request.uri : " + request.getRequestURI());
         if(principal != null && principal instanceof UserDetails){
             String userName = ((UserDetails)principal).getUsername();
             Set<String> urls = new HashSet<>();
@@ -35,7 +35,7 @@ public class RbacServiceImpl implements RbacService{
             try{
                 for(SysRole role : member.getSysRoleList()){
                     for(SysPermission permission : role.getSysPermissionList()){
-                        System.out.println(permission.getUrl());
+//                        System.out.println(permission.getUrl());
                         urls.add(permission.getUrl());
                     }
                 }

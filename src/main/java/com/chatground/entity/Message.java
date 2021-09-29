@@ -11,10 +11,11 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 /**
+ * 此表格尚未用到
  * 聊天訊息
  */
 @Entity
-@EntityListeners(AuditingEntityListener.class)
+//@EntityListeners(AuditingEntityListener.class)
 @Data
 public class Message {
 
@@ -34,7 +35,7 @@ public class Message {
     /**
      *發訊時間
      */
-    @CreatedDate
+//    @CreatedDate
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column
     private Timestamp time;
