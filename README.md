@@ -17,4 +17,4 @@ Redis啟用RDB機制, 週期性對redis進行快照完成持久化, 並且寫排
 - Thymeleaf
 
 ###使用說明
-資料庫建好表格後, 參照doc資料夾內的CHATGROUND.sql執行sql建立member、role與permission
+資料庫建好表格後, 參照doc資料夾內的CHATGROUND.sql執行sql建立role與permission
