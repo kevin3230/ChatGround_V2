@@ -116,10 +116,58 @@ function addConfirmPwdListener(){
     });
 }
 
+function restrictMaxDate(){ //生日不可大於等於今天
+    let today = new Date();
+    let dd = today.getDate();
+    let mm = today.getMonth() + 1; //january is 0
+    let yyyy = today.getFullYear();
+    if(dd < 10){
+        dd = '0' + dd;
+    }
+    if(mm < 10){
+        mm = '0' + mm;
+    }
+    today = yyyy + '-' + mm + '-' + dd;
+    $("#birthday").attr("max", today);
+}
+
+function previewMem_pic(){
+    $("#mem_pic").change(function(){
+        $("#previewMem_pic").empty();  //清空圖片
+        let files = $("#mem_pic").prop("files");
+
+        // console.log(files);
+
+        if(files.length != 0){  //有選取檔案
+
+            // console.log(files[0]);
+
+            let file = files[0];
+            if(file.type.indexOf('image') > -1){
+                let reader = new FileReader();
+                reader.addEventListener('load', function(){
+
+                    // console.log(reader.result);
+
+                    $("#previewMem_pic").append(
+                        $('<img>').attr("src", reader.result)
+                    );
+                });
+                reader.readAsDataURL(file);
+            }else{
+                alert("請上傳圖片");
+            }
+        }else{
+            $("#previewMem_pic").empty();  //清空圖片
+        }
+    });
+}
+
 $(document).ready(function(){
     addAccountListener();
     addEmailListener();
     addConfirmPwdListener();
     addSubmitListener();
-
+    restrictMaxDate();
+    previewMem_pic();
 });

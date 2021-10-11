@@ -16,6 +16,8 @@
                 <div th:each="member: ${member}">
                     <span th:text="${member.nickName}">名字</span>(先生/女士) 註冊會員成功
                 </div>
+                <p>大頭照:</p>
+                <img th:if="${mem_pic != null}" th:src="'data:img/png;base64,' + ${mem_pic}" style="width: 80%; height: auto">
             </div>
         </div>
     </div>

@@ -1,3 +1,6 @@
+--#使用cmd建立MySQL DB
+--create database chatground_v2;
+
 --表格建好後執行下列sql
 --#sys_role
 insert into `sys_role` ( `id`, `cn_name`, `role`, `available`, `description`) values(1, 'admin', 'ROLE_ADMIN', 1 , null);

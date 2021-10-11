@@ -108,7 +108,7 @@ public class Member implements UserDetails {
     /**
      *頭像
      */
-    @Column
+    @Column(length=1048576) //檔案大小10MB，ddl自動判斷column type mediumBLOB
     private byte[] picture;
 
     /**

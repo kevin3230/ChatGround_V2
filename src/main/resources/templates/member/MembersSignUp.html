@@ -21,7 +21,12 @@
 					會員註冊
 				</div>
 				<div class="col-12">
-
+					<div th:if="${errorMessages != null}" id="errorMessages" class="warn">
+						錯誤訊息:
+						<div th:each="error: ${errorMessages}">
+							<li th:text="${error}">錯誤訊息</li>
+						</div>
+					</div>
 					<form th:action="@{/member/signup}" th:object="${member}" method="post" id="signUp" enctype="multipart/form-data">
 						<table class="col-12">
 							<thead>
@@ -66,7 +71,7 @@
 								</tr>
 								<tr>
 									<th><label class="xrequired">生日</label></th>
-									<td><input type="date" name="birthday" required="required" th:value="${member.birth }"></td>
+									<td><input type="date" name="birthday"id="birthday" required="required" th:value="${member.birth }"></td>
 								</tr>
 								<tr>
 									<th><label class="xrequired">性別</label></th>
@@ -78,11 +83,12 @@
 								</tr>
 								<tr>
 									<th>大頭照</th>
-									<td><input type="file" name="mempic" th:value="${member.picture }"></td>
+									<td><input type="file" name="mem_pic" id="mem_pic" accept="image/png, image/jpeg" th:value="${member.picture }"></td>
 								</tr>
 							</tbody>
 						</table>
 					</form>
+					<div class="row my-2" id="previewMem_pic" />
 				</div>
 				<div class="row justify-content-center">
 					<button type="submit" form="signUp" id="submitBtn">註冊</button>
