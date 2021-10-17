@@ -3,7 +3,6 @@ package com.chatground.websocket;
 import com.chatground.dto.ChatgroundMessage;
 import com.chatground.redis.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
@@ -14,7 +13,7 @@ import java.util.Set;
 @Controller
 public class WebSocketController {
 
-    private static Set<String> onlineMembersSet = new HashSet<>();  //紀錄在線上的會員
+    private final static Set<String> onlineMembersSet = new HashSet<>();  //紀錄在線上的會員
 
     @Autowired
     private RedisService redisService;
@@ -22,7 +21,7 @@ public class WebSocketController {
     @MessageMapping("/open")
     @SendTo("/topic/getResponse")
     public ChatgroundMessage open(ChatgroundMessage req){
-        ChatgroundMessage res = null;
+        ChatgroundMessage res;
 
             onlineMembersSet.add(req.getSender());  //線上人數+1
 
@@ -37,7 +36,7 @@ public class WebSocketController {
     @MessageMapping("/chat")
     @SendTo("/topic/getResponse")
     public ChatgroundMessage chat(ChatgroundMessage req){
-        ChatgroundMessage res = null;
+        ChatgroundMessage res;
 
         //檢查訊息字數不超過400字
         String message = req.getMessage();
