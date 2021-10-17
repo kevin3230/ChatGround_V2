@@ -15,10 +15,9 @@
             });
             //取得線上人數onlinecounter
             let jsonObj = {
-                "type": "onOpen",
                 "sender": self
             };
-            stompClient.send("/messageControl", {}, JSON.stringify(jsonObj));
+            stompClient.send("/server/open", {}, JSON.stringify(jsonObj));
         });
     }
 
@@ -43,12 +42,11 @@
             textarea.focus();
         } else {
             var jsonObj = {
-                "type": "chat",
                 "sender": self,
                 "senderNickname": selfNickname,
                 "message": message
             };
-            stompClient.send("/messageControl", {}, JSON.stringify(jsonObj));
+            stompClient.send("/server/chat", {}, JSON.stringify(jsonObj));
         }
         textarea.val("");
         textarea.focus();
@@ -57,10 +55,9 @@
     function disconnect() {
         if(stompClient != null){
             let jsonObj = {
-                "type": "onClose",
                 "sender": self
             };
-            stompClient.send("/messageControl", {}, JSON.stringify(jsonObj));
+            stompClient.send("/server/close", {}, JSON.stringify(jsonObj));
             stompClient.disconnect();
         }
         $("#text_submit").prop("disabled", true);

@@ -19,43 +19,51 @@ public class WebSocketController {
     @Autowired
     private RedisService redisService;
 
-    @MessageMapping("/messageControl")
+    @MessageMapping("/open")
     @SendTo("/topic/getResponse")
-    public ChatgroundMessage said(ChatgroundMessage req){
+    public ChatgroundMessage open(ChatgroundMessage req){
         ChatgroundMessage res = null;
 
-
-        if("chat".equals(req.getType())){
-
-            //檢查訊息字數不超過400字
-            String message = req.getMessage();
-            if(message.length() > 400){
-                message = message.substring(0, 400);
-            }
-
-            //存入Redis
-            redisService.saveMessage(req);
-
-            res = ChatgroundMessage.builder()
-                    .type("chat")
-                    .senderNickname(req.getSenderNickname())
-                    .message(message)
-                    .onlineCounter(onlineMembersSet.size())
-                    .build();
-        }else if("onOpen".equals(req.getType())){
             onlineMembersSet.add(req.getSender());  //線上人數+1
 
             res = ChatgroundMessage.builder()
                     .type("onOpen")
                     .onlineCounter(onlineMembersSet.size())
                     .build();
-        }else if("onClose".equals(req.getType())){
 
-            onlineMembersSet.remove(req.getSender());   //線上人數-1
-//            System.out.println("disconnect");
-//            onlineMembersSet.forEach(e -> System.out.println(e)); //測試剩餘線上人數
-        }
         return res;
     }
 
+    @MessageMapping("/chat")
+    @SendTo("/topic/getResponse")
+    public ChatgroundMessage chat(ChatgroundMessage req){
+        ChatgroundMessage res = null;
+
+        //檢查訊息字數不超過400字
+        String message = req.getMessage();
+        if(message.length() > 400){
+            message = message.substring(0, 400);
+        }
+
+        //存入Redis
+        redisService.saveMessage(req);
+
+        res = ChatgroundMessage.builder()
+                .type("chat")
+                .senderNickname(req.getSenderNickname())
+                .message(message)
+                .onlineCounter(onlineMembersSet.size())
+                .build();
+        return res;
+    }
+
+    @MessageMapping("/close")
+    @SendTo("/topic/getResponse")
+    public void close(ChatgroundMessage req){
+
+        onlineMembersSet.remove(req.getSender());   //線上人數-1
+//            System.out.println("disconnect");
+//            onlineMembersSet.forEach(e -> System.out.println(e)); //測試剩餘線上人數
+
+    }
 }
