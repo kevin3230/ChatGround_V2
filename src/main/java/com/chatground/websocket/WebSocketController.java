@@ -58,11 +58,18 @@ public class WebSocketController {
 
     @MessageMapping("/close")
     @SendTo("/topic/getResponse")
-    public void close(ChatgroundMessage req){
+    public ChatgroundMessage close(ChatgroundMessage req){
+        ChatgroundMessage res;
 
         onlineMembersSet.remove(req.getSender());   //線上人數-1
-//            System.out.println("disconnect");
-//            onlineMembersSet.forEach(e -> System.out.println(e)); //測試剩餘線上人數
+//        System.out.println("disconnect");
+//        onlineMembersSet.forEach(e -> System.out.println(e)); //測試剩餘線上人數
 
+        //推送線上人數給client
+        res = ChatgroundMessage.builder()
+                .type("onSomeoneClose")
+                .onlineCounter(onlineMembersSet.size())
+                .build();
+        return res;
     }
 }

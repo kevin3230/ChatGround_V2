@@ -29,6 +29,8 @@
             scrollBottom();
         }else if("onOpen" === jsonObj.type){
             $("#onlineCounter").text(jsonObj.onlineCounter);
+        }else if("onSomeoneClose" === jsonObj.type){
+            $("#onlineCounter").text(jsonObj.onlineCounter);
         }else if("onClose"){}
     }
 
