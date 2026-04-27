@@ -2,12 +2,13 @@ package com.chatground.service;
 
 import com.chatground.entity.Member;
 import com.chatground.repository.MemberRepository;
+import com.chatground.utility.MemberStatus;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
 
 public class UserSecurityService implements UserDetailsService {
     @Autowired
@@ -23,7 +24,7 @@ public class UserSecurityService implements UserDetailsService {
             }else{
                 member =  emailMember;
             }
-        }else if("locked".equals(member.getStatus())){  //被鎖定，無法登入
+        }else if(MemberStatus.LOCKED.equals(member.getStatus())){  //被鎖定，無法登入
             throw new LockedException("帳號被鎖定");
         }
         return member;

@@ -2,9 +2,10 @@ package com.chatground.redis;
 
 import com.chatground.dto.ChatgroundMessage;
 import com.chatground.entity.GroundMessage;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,7 @@ public class RedisService {
 
         try{
             stringRedisTemplate.opsForList().rightPush(key, objectMapper.writeValueAsString(messageDto));
-        }catch (JsonProcessingException e) {
+        }catch (JacksonException e) {
             log.info("parsing GroundMessage to JsonString error :{}", e);
         }
     }

@@ -2,8 +2,11 @@ package com.chatground.entity;
 
 import lombok.Data;
 
-import javax.persistence.*;
 import java.util.List;
+
+import com.chatground.utility.Role;
+
+import jakarta.persistence.*;
 
 @Data
 @Entity
@@ -14,8 +17,9 @@ public class SysRole {
 
     private String cnName;
 
-    @Column(nullable = false, columnDefinition = "enum('ROLE_ADMIN', 'ROLE_USER')")
-    private String role;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)	//enum("ADMIN", "USER")
+    private Role role;
 
     private String description;
 

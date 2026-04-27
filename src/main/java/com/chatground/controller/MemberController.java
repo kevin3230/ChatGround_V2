@@ -2,12 +2,15 @@ package com.chatground.controller;
 
 import com.chatground.dto.AccountAndEmail;
 import com.chatground.entity.Member;
-import com.chatground.entity.SysRole;
 import com.chatground.repository.MemberRepository;
 import com.chatground.repository.SysRoleRepository;
 import com.chatground.service.MemberService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.chatground.utility.MemberStatus;
+
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import tools.jackson.databind.ObjectMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -36,7 +38,7 @@ public class MemberController {
     MemberRepository memberRepository;
     @Autowired
     SysRoleRepository sysRoleRepository;
-
+    
     /**
      * 註冊頁面
      * @param model
@@ -61,7 +63,7 @@ public class MemberController {
     @RequestMapping(method = RequestMethod.POST, value = "/signup")
     public String signUp(@Valid Member member, BindingResult bindingResult, @RequestParam(value="mem_pic")MultipartFile picFile, RedirectAttributes attr, Model model){
 
-//        System.out.println(bindingResult.hasErrors());
+        log.debug(String.valueOf(bindingResult.hasErrors()));
 
         if(bindingResult.hasErrors()){
             return "member/MembersSignUp";
@@ -69,7 +71,8 @@ public class MemberController {
 
         List<String> errorMessages = new ArrayList<>();
 
-//        System.out.println(member);
+        log.debug(member.toString());
+        
 
         //驗證圖片格式
         if( !picFile.isEmpty()){    //判斷圖片檔案是否存在
@@ -93,8 +96,8 @@ public class MemberController {
 
         PasswordEncoder pwEncoder = new BCryptPasswordEncoder();
         member.setPassword(pwEncoder.encode(member.getPassword()));
-        member.setStatus("active");
-        member.setSysRoleList(List.of(sysRoleRepository.findByRole("ROLE_USER")));  //設定角色為USER
+        member.setStatus(MemberStatus.ACTIVE);
+        member.setSysRoleList(List.of(sysRoleRepository.findByRole("USER")));  //設定角色為USER
         memberRepository.save(member);
 
         //在註冊成功頁面顯示大頭照
@@ -105,16 +108,16 @@ public class MemberController {
 
         attr.addFlashAttribute("member", member);
 
-        return "redirect:/member/result";
+        return "redirect:/member/signup_result";
     }
 
     /**
      * 註冊成功頁面
      * @return
      */
-    @GetMapping("/result")
-    public String result(){
-        return "member/result";
+    @GetMapping("/signup_result")
+    public String signupResult(){
+        return "member/signup_result";
     }
 
 

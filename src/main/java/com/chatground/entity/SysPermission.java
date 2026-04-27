@@ -2,9 +2,10 @@ package com.chatground.entity;
 
 import lombok.Data;
 
-import javax.persistence.*;
 import java.util.Arrays;
 import java.util.List;
+
+import jakarta.persistence.*;
 
 @Data
 @Entity

@@ -11,10 +11,15 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Past;
-import javax.validation.constraints.Size;
+import com.chatground.utility.Gender;
+import com.chatground.utility.Role;
+import com.chatground.utility.MemberStatus;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Size;
+
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -34,6 +39,11 @@ import java.util.Set;
 public class Member implements UserDetails {
 
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 5091614540339434891L;
+
+	/**
      *會員編號
      */
     @Id
@@ -81,9 +91,10 @@ public class Member implements UserDetails {
     /**
      *性別
      */
-    @Column(columnDefinition = "enum('X','男','女')")
+    @Column
     @Size(max = 1)
-    private String gender;
+    @Enumerated(EnumType.STRING)	//enum(X("X"),MALE("男"),FEMALE("女"))
+    private Gender gender;
 
     /**
      *註冊日期
@@ -96,19 +107,22 @@ public class Member implements UserDetails {
     /**
      *帳號狀態(封鎖,正常)
      */
-    @Column(nullable = false, columnDefinition = "enum('locked', 'active')")
-    private String status;
+    @Column(nullable = false)
+    @Size(max = 20)
+    @Enumerated(EnumType.STRING)	//enum("locked", "active")
+    private MemberStatus status;
 
     /**
      *角色(管理員, 使用者)
      */
-//    @Column(nullable = false, columnDefinition = "enum('ADMIN', 'USER')")
-//    private String role;
+//    @Column(nullable = false)
+//    @Enumerated(EnumType.STRING)	//enum("ADMIN", "USER")
+//    private Role role;
 
     /**
      *頭像
      */
-    @Column(length=1048576) //檔案大小10MB，ddl自動判斷column type mediumBLOB
+    @Column(length=1048576) //檔案大小10MB，DDL自動判斷column type mediumBLOB
     private byte[] picture;
 
     /**
@@ -132,7 +146,7 @@ public class Member implements UserDetails {
         List<GrantedAuthority> authorities = new ArrayList<>();
         List<SysRole> roleList = this.getSysRoleList();
         for(SysRole role: roleList){
-            authorities.add(new SimpleGrantedAuthority(role.getRole()));
+            authorities.add(new SimpleGrantedAuthority(role.getRole().toString()));
         }
         return authorities;
     }
@@ -166,5 +180,5 @@ public class Member implements UserDetails {
     public String getPassword(){
         return password;
     }
-
+    
 }

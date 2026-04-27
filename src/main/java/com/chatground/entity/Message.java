@@ -5,8 +5,11 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.*;
-import javax.validation.constraints.Size;
+import com.chatground.utility.MessageStatus;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
+
 import java.sql.Date;
 import java.sql.Timestamp;
 
@@ -57,7 +60,8 @@ public class Message {
     /**
      *訊息狀態(失敗,已讀,未讀,收回,刪除)
      */
-    @Column(nullable = false, columnDefinition = "enum('fail', 'read', 'unread', 'cancel', 'delete')")
-    private String status;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)	//enum("fail", "read", "unread", "cancel", "delete")
+    private MessageStatus status;
 
 }

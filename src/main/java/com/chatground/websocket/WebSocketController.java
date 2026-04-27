@@ -2,6 +2,9 @@ package com.chatground.websocket;
 
 import com.chatground.dto.ChatgroundMessage;
 import com.chatground.redis.RedisService;
+
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import java.util.HashSet;
 import java.util.Set;
 
+@Slf4j
 @Controller
 public class WebSocketController {
 
@@ -62,8 +66,8 @@ public class WebSocketController {
         ChatgroundMessage res;
 
         onlineMembersSet.remove(req.getSender());   //線上人數-1
-//        System.out.println("disconnect");
-//        onlineMembersSet.forEach(e -> System.out.println(e)); //測試剩餘線上人數
+        log.debug("disconnect");
+        onlineMembersSet.forEach(e -> log.debug(e)); //測試剩餘線上人數
 
         //推送線上人數給client
         res = ChatgroundMessage.builder()

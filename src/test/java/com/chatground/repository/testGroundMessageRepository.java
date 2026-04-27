@@ -1,26 +1,25 @@
 package com.chatground.repository;
 
-import com.chatground.dto.ChatgroundMessage;
-import com.chatground.entity.ChatRoom;
-import com.chatground.entity.GroundMessage;
-import com.chatground.entity.Message;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.test.context.junit4.SpringRunner;
-
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import com.chatground.entity.GroundMessage;
+
+import tools.jackson.databind.ObjectMapper;
+
 @SpringBootTest
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 public class testGroundMessageRepository{
 
     @Autowired
@@ -51,14 +50,13 @@ public class testGroundMessageRepository{
     }
 
     /**
-     * 測試List<GroundMessage>存入redis,再從redis取出list後batch insert存入MySQL
+     * 測試List<GroundMessage>存入redis,再從redis取出list後batch insert存入資料庫
      * @throws Exception
      */
     @Test
     public void testBatchSave()throws Exception{
         stringRedisTemplate.opsForList().rightPushAll("message:chatground", list);
         List<GroundMessage> linkedList = new LinkedList<>();
-        System.out.println(stringRedisTemplate.opsForList().size("message:chatground"));
         System.out.println(stringRedisTemplate.opsForList().size("message:chatground"));
         long size = stringRedisTemplate.opsForList().size("message:chatground");
         for(long i = 0; i < size; i++){

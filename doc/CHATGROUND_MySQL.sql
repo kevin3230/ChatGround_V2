@@ -1,10 +1,10 @@
 --#使用cmd建立MySQL DB
---create database chatground_v2;
+--create database chatground;
 
 --表格建好後執行下列sql
 --#sys_role
-insert into `sys_role` ( `id`, `cn_name`, `role`, `available`, `description`) values(1, 'admin', 'ROLE_ADMIN', 1 , null);
-insert into `sys_role` (`id`, `cn_name`, `role`, `available`) values(2, 'user', 'ROLE_USER', 1);
+insert into `sys_role` ( `id`, `cn_name`, `role`, `available`, `description`) values(1, 'admin', 'ADMIN', 1 , null);
+insert into `sys_role` (`id`, `cn_name`, `role`, `available`) values(2, 'user', 'USER', 1);
 
 --#sys_permission
 insert into `sys_permission` (`id`, `available`, `name`, `parent_id`, `parent_ids`, `permission`, `resource_type`, `url`)
@@ -18,11 +18,11 @@ insert into `member_sysrole` (`mem_id`, `role_id`) values(1, 1);
 
 -- 此script僅當參考用,使用spring.jpa.hibernate.ddl-auto=update 自動建立表格
 DROP TABLE MESSAGE;
-DROP TABLE MEMCRSET;
+DROP TABLE MEMCHATROOMSET;
 DROP TABLE CHATROOM;
-DROP TABLE SYSTEM_NOTIFY;
+DROP TABLE SYSTEM_NOTIFICATION;
 DROP TABLE MEMBER;
-DROP SEQUENCE SEQ_MEMCRSETNO;
+DROP SEQUENCE SEQ_MEMCHATROOMSETNO;
 DROP SEQUENCE SEQ_MEMNO;
 DROP SEQUENCE SEQ_MSGNO;
 DROP SEQUENCE SEQ_CRNO;
@@ -48,14 +48,14 @@ CREATE TABLE CHATROOM(
     CR_NICKNAME VARCHAR2(20) NOT NULL
 );
 
-CREATE TABLE MEMCRSET (
-    MEMCRSET_NO CHAR(20) PRIMARY KEY NOT NULL,
-    MEMCRSET_MEMNO CHAR(10) NOT NULL,
-    MEMCRSET_CRNO CHAR(20) NOT NULL,
-    CONSTRAINT FK_MEMCRSET_MEMNO_MEM_NO
-    FOREIGN KEY(MEMCRSET_MEMNO) REFERENCES MEMBER(MEM_NO),
-    CONSTRAINT FK_MEMCRSET_CRNO_CR_NO
-    FOREIGN KEY(MEMCRSET_CRNO) REFERENCES CHATROOM(CR_NO)
+CREATE TABLE MEMCHATROOMSET (
+    MEMCHATROOMSET_NO CHAR(20) PRIMARY KEY NOT NULL,
+    MEMCHATROOMSET_MEMNO CHAR(10) NOT NULL,
+    MEMCHATROOMSET_CRNO CHAR(20) NOT NULL,
+    CONSTRAINT FK_MEMCHATROOMSET_MEMNO_MEM_NO
+    FOREIGN KEY(MEMCHATROOMSET_MEMNO) REFERENCES MEMBER(MEM_NO),
+    CONSTRAINT FK_MEMCHATROOMSET_CRNO_CR_NO
+    FOREIGN KEY(MEMCHATROOMSET_CRNO) REFERENCES CHATROOM(CR_NO)
 );
 
 CREATE TABLE MESSAGE (
@@ -71,7 +71,7 @@ CREATE TABLE MESSAGE (
     FOREIGN KEY(MSG_CRNO) REFERENCES CHATROOM(CR_NO)
 );
 
-CREATE TABLE SYSTEM_NOTICE(
+CREATE TABLE SYSTEM_NOTIFICATION(
     SN_NO CHAR(20) NOT NULL PRIMARY KEY,
     SN_CONTENT VARCHAR2(500) NOT NULL,
     SN_TIME TIMESTAMP NOT NULL
@@ -97,7 +97,7 @@ CREATE SEQUENCE SEQ_SNNO
     NOCYCLE
     NOCACHE;
     
-CREATE SEQUENCE SEQ_MEMCRSETNO
+CREATE SEQUENCE SEQ_MEMCHATROOMSETNO
     MAXVALUE 999999999999999999
     NOCYCLE
     NOCACHE;

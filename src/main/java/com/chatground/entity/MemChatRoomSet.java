@@ -1,10 +1,10 @@
 package com.chatground.entity;
 
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 
 /**
  * 此表格尚未用到
@@ -12,8 +12,8 @@ import javax.validation.constraints.NotEmpty;
  */
 @Entity
 @Data
-@Table(name = "mem_cr_set")
-public class MemCRSet {
+@Table(name = "mem_chat_room_set")
+public class MemChatRoomSet {
 
     /**
      *會員聊天室編號
