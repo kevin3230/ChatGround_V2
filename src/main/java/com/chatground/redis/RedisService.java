@@ -2,10 +2,11 @@ package com.chatground.redis;
 
 import com.chatground.dto.ChatgroundMessage;
 import com.chatground.entity.GroundMessage;
-import lombok.extern.slf4j.Slf4j;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -13,9 +14,10 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
-@Slf4j
 @Service
 public class RedisService {
+	
+	private static final Logger log = LoggerFactory.getLogger(RedisService.class);
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;

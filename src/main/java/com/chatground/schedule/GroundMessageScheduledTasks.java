@@ -2,10 +2,11 @@ package com.chatground.schedule;
 
 import com.chatground.entity.GroundMessage;
 import com.chatground.repository.GroundMessageRepository;
-import lombok.extern.slf4j.Slf4j;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -17,9 +18,10 @@ import java.util.List;
 /**
  * 排程將redis的ground聊天訊息存入資料庫
  */
-@Slf4j
 @Component
 public class GroundMessageScheduledTasks {
+	
+	private static final Logger log = LoggerFactory.getLogger(GroundMessageScheduledTasks.class);
 
     @Autowired
     private GroundMessageRepository groundMessageRepository;

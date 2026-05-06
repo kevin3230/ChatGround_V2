@@ -7,7 +7,7 @@
         stompClient.connect({},function(data){
             // console.log("Connected success: " + data);
             $("#area").html(""); //清空對話框
-            $("#area").append($("<li>").text("歡迎來到聊天廣場，在這裡可以暢所欲言"));
+            $("#area").append($("<li>").text(messages[lang].chatground_welcome));
             $("#text_submit").prop("disabled", false);
             stompClient.subscribe('/topic/getResponse', function(response){
                 // console.log("response success: " + response);
@@ -92,7 +92,7 @@
 
     $(document).ready(function() {
         $("#text_submit").prop("disabled", true);
-        $("#area").append($("<li>").text("連線中..."));
+        $("#area").append($("<li>").text(messages[lang].chatground_connect));
         scrollBottom();
         addListener();
         connect();
