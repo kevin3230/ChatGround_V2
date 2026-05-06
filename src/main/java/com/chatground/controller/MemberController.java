@@ -5,14 +5,17 @@ import com.chatground.entity.Member;
 import com.chatground.repository.MemberRepository;
 import com.chatground.repository.SysRoleRepository;
 import com.chatground.service.MemberService;
+import com.chatground.utility.LanguageUtils;
 import com.chatground.utility.MemberStatus;
+import com.chatground.utility.Role;
 
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.ObjectMapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.context.MessageSource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,18 +29,25 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Set;
 
-@Slf4j
+
 @Controller
 @RequestMapping("/member")
 public class MemberController {
+	
+	private static final Logger log = LoggerFactory.getLogger(MemberController.class);
 
+	@Autowired
+	private PasswordEncoder passwordEncoder;
     @Autowired
     MemberService memberService;
     @Autowired
     MemberRepository memberRepository;
     @Autowired
     SysRoleRepository sysRoleRepository;
+    @Autowired
+	private MessageSource messageSource;
     
     /**
      * 註冊頁面
@@ -78,11 +88,11 @@ public class MemberController {
         if( !picFile.isEmpty()){    //判斷圖片檔案是否存在
             String picType = picFile.getContentType();
             if(!"image/png".equals(picType) && !"image/jpeg".equals(picType)){
-                errorMessages.add("圖片格式錯誤");
+                errorMessages.add(messageSource.getMessage("profile.picture.extension.mismatched", null, LanguageUtils.getLocale()));
                 model.addAttribute("errorMessages", errorMessages);
                 return "member/MembersSignUp";
-            }else if(picFile.getSize() > 10240000L){
-                errorMessages.add("圖片大小超過10mb");
+            }else if(picFile.getSize() > 10240000L){	//圖片大小限制10mb
+                errorMessages.add(messageSource.getMessage("profile.picture.oversize", new Object[]{"10"}, LanguageUtils.getLocale()));
                 model.addAttribute("errorMessages", errorMessages);
                 return "member/MembersSignUp";
             }else{
@@ -94,11 +104,18 @@ public class MemberController {
             }
         }
 
-        PasswordEncoder pwEncoder = new BCryptPasswordEncoder();
-        member.setPassword(pwEncoder.encode(member.getPassword()));
+        member.setPassword(passwordEncoder.encode(member.getPassword()));
         member.setStatus(MemberStatus.ACTIVE);
-        member.setSysRoleList(List.of(sysRoleRepository.findByRole("USER")));  //設定角色為USER
-        memberRepository.save(member);
+        member.setSysRoleList(List.of(sysRoleRepository.findByRole(Role.USER)));  //設定角色為USER
+        try {
+        	memberRepository.save(member);
+        }catch(Exception e) {
+        	log.info("MemberRepository save member failed. ", e);
+        	
+        	errorMessages.add(messageSource.getMessage("save.member.failed", null, LanguageUtils.getLocale()));
+            model.addAttribute("errorMessages", errorMessages);
+        	return "member/MembersSignUp";
+        }
 
         //在註冊成功頁面顯示大頭照
         if(member.getPicture() != null){
@@ -149,7 +166,7 @@ public class MemberController {
         accountAndEmail = new AccountAndEmail();
         accountAndEmail.setUnique(false);
         accountAndEmail.setError(true);
-        accountAndEmail.setMessage("query format incorrect");
+        accountAndEmail.setMessage("Query format incorrect.");
         return mapper.writeValueAsString(accountAndEmail);
     }
 

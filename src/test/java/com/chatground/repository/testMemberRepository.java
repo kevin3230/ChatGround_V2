@@ -6,11 +6,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.chatground.entity.Member;
+import com.chatground.security.UserPrincipal;
 import com.chatground.utility.Gender;
 import com.chatground.utility.MemberStatus;
 
@@ -19,6 +20,9 @@ import com.chatground.utility.MemberStatus;
 //@Transactional
 public class testMemberRepository {
 
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
     @Autowired
     private MemberRepository memberRepository;
 
@@ -26,10 +30,9 @@ public class testMemberRepository {
 
     @Before
     public void before(){
-        BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
         member = Member.builder()
                 .account("account1")
-                .password(bcrypt.encode("123456"))
+                .password(passwordEncoder.encode("123456"))
                 .nickName("first 1")
                 .email("123@abc.com")
                 .gender(Gender.X)
@@ -46,8 +49,9 @@ public class testMemberRepository {
 
     @Test
     public void testFindByAccount(){
-        Member user = memberRepository.findByAccount("account1");
+        Member member = memberRepository.findByAccount("account1");
 
+        UserPrincipal user = new UserPrincipal(member);
         //顯示會員角色
         for(GrantedAuthority authority : user.getAuthorities()){
             System.out.println(authority.getAuthority());

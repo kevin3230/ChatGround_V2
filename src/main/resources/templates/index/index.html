@@ -13,12 +13,11 @@
 	<div class="container">
 		<div class="row justify-content-center">
 			<div class="col-10">
-				<div class="col-12">
-					群聊網站
+				<div th:text="#{index.title}" class="col-12">
 				</div>
 				<div class="col-12">
-					歡迎加入ChatGround這個大家庭，這裡可以放開身心無所不談，請先註冊會員並登入以進入聊天室。
-					<a th:href="@{/member/signup}" href="/member/signup">註冊</a>
+					<span th:text="#{index.welcome.messsage}"></span>
+					<a th:href="@{/member/signup}" href="/member/signup" th:text="#{signup}"></a>
 				</div>
 			</div>
 		</div>

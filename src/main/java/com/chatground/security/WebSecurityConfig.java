@@ -6,11 +6,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -22,20 +21,21 @@ import com.chatground.utility.GetApplicationProperties;
 //指定為Spring Security設定類別
 @EnableWebSecurity
 //如果要開啟方法安全設定，則開啟此項
-//@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
+@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class WebSecurityConfig {
 
 	@Autowired
 	private GetApplicationProperties getApplicationProperties;
     
 	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
     private RbacService rbacService;
 	
-    private PasswordEncoder getPasswordEncoder(){
-        //使用BCrypt 加密
-        return new BCryptPasswordEncoder();
-    }
-    
+	@Autowired
+	private UserSecurityService userSecurityService;
+	
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
     	//自訂WebSecurity的debug開關
@@ -99,21 +99,19 @@ public class WebSecurityConfig {
         return http.build();
     }
 
-
-    private UserDetailsService service(){return new UserSecurityService();}
     
     @Autowired
     protected void configure(AuthenticationManagerBuilder auth) throws Exception{
-        auth.userDetailsService(service()).passwordEncoder(getPasswordEncoder());
+        auth.userDetailsService(userSecurityService).passwordEncoder(passwordEncoder);
     }
 
     //測試角色授權url
 //    @Autowired
 //    public void configuredGlobal(AuthenticationManagerBuilder auth) throws Exception{
 //        auth.inMemoryAuthentication()
-//        	.passwordEncoder(new BCryptPasswordEncoder())
+//        	.passwordEncoder(passwordEncoder)
 //        	.withUser("user")
-//        	.password(new BCryptPasswordEncoder().encode("123"))
+//        	.password(passwordEncoder.encode("123"))
 //            .roles("USER");
 //    }
     

@@ -15,7 +15,7 @@
     <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy"> 
         <FileNamePattern>.\log\ChatGround.%d{yyyy-MM-dd}.%i.log</FileNamePattern>       
         <maxHistory>30</maxHistory>
-		<maxFileSize>256MB</maxFileSize>
+		<maxFileSize>100MB</maxFileSize>
     </rollingPolicy>
     <encoder>
         <pattern>${Format1}</pattern>

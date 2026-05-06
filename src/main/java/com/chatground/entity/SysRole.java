@@ -3,6 +3,7 @@ package com.chatground.entity;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Set;
 
 import com.chatground.utility.Role;
 
@@ -28,9 +29,7 @@ public class SysRole {
     /**
      * 會員與角色對應
      */
-    @ManyToMany
-    @JoinTable(name="member_sysrole", joinColumns = {@JoinColumn(name="role_id")},
-    inverseJoinColumns = {@JoinColumn(name="mem_id")})
+    @ManyToMany(mappedBy = "sysRoleList")
     private List<Member> memberList;
 
     /**
@@ -39,7 +38,7 @@ public class SysRole {
     @ManyToMany(fetch=FetchType.EAGER)
     @JoinTable(name="SysRolePermission", joinColumns={@JoinColumn(name="role_id")},
     inverseJoinColumns={@JoinColumn(name="permission_id")})
-    private List<SysPermission> sysPermissionList;
+    private Set<SysPermission> sysPermissionList;
 
 
 }

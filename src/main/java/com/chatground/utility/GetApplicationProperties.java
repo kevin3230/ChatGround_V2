@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class GetApplicationProperties {
 	
 	//自訂WebSecurity的debug開關，找不到參數預設false
-	@Value("${web.security.security-debg:false}")
+	@Value("${web.security.security-debug:false}")
 	private boolean securityDebug;
 	
 	public boolean getSecurityDebug() {

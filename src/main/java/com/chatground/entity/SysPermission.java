@@ -32,9 +32,7 @@ public class SysPermission {
     @Transient
     private List<String> permissions;
 
-    @ManyToMany
-    @JoinTable(name="SysRolePermission", joinColumns = {@JoinColumn(name="permission_id")},
-    inverseJoinColumns = {@JoinColumn(name="role_id")})
+    @ManyToMany(mappedBy = "sysPermissionList")
     private List<SysRole> sysRoleList;
 
     public List<String> getPermissions(){
