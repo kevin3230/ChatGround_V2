@@ -39,12 +39,14 @@ public class WebSecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
     	//自訂WebSecurity的debug開關
+    	//static資源不要求security，避免依請求路徑URL自行判斷MIME type是text/html或application/json等
+    	//使用webjars時要"unprotect" /webjars/**路徑，避免依請求路徑URL自行判斷MIME type是text/html或application/json等
         return (web) -> web.debug(getApplicationProperties.getSecurityDebug());
     }
     
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http.csrf((csrf) -> csrf.disable())	//停用CSRF
+//        http.csrf((csrf) -> csrf.disable());	//停用CSRF
         	//授權
 	    http.authorizeHttpRequests((authorize) -> authorize
         		.requestMatchers(HttpMethod.DELETE).hasRole("ADMIN")
@@ -52,10 +54,12 @@ public class WebSecurityConfig {
         		.requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
         		.requestMatchers("/login/**").anonymous()
         		.requestMatchers("/css/**", "/js/**", "/utility/**").permitAll()
+        		//開放下載聊天室websocket要用的js的權限
+        		.requestMatchers("/webjars/**").permitAll()
         		.requestMatchers("/static/**").permitAll()
-		        .requestMatchers("/member/login").permitAll()
-		        .requestMatchers("/member/logout_confirm").permitAll()
-		        .requestMatchers("/member/signup").permitAll()
+		        .requestMatchers("/member/login").anonymous()
+		        .requestMatchers("/member/logout_confirm").authenticated()
+		        .requestMatchers("/member/signup").anonymous()
 		        .requestMatchers("/member/signup_result").permitAll()
 		        .requestMatchers("/member/checkAccountAndEmail").permitAll()
 		        //棄用預設角色

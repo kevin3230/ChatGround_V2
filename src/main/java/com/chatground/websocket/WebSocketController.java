@@ -12,13 +12,14 @@ import org.springframework.stereotype.Controller;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Controller
 public class WebSocketController {
 	
 	private static final Logger log = LoggerFactory.getLogger(WebSocketController.class);
 
-    private final static Set<String> onlineMembersSet = new HashSet<>();  //紀錄在線上的會員
+    private final static Set<String> onlineMembersSet =  ConcurrentHashMap.newKeySet();  //紀錄在線上的會員，thread safe
 
     @Autowired
     private RedisService redisService;
@@ -28,12 +29,12 @@ public class WebSocketController {
     public ChatgroundMessage open(ChatgroundMessage req){
         ChatgroundMessage res;
 
-            onlineMembersSet.add(req.getSender());  //線上人數+1
+        onlineMembersSet.add(req.getSender());  //線上人數+1
 
-            res = ChatgroundMessage.builder()
-                    .type("onOpen")
-                    .onlineCounter(onlineMembersSet.size())
-                    .build();
+        res = ChatgroundMessage.builder()
+                .type("onOpen")
+                .onlineCounter(onlineMembersSet.size())
+                .build();
 
         return res;
     }
@@ -68,7 +69,7 @@ public class WebSocketController {
 
         onlineMembersSet.remove(req.getSender());   //線上人數-1
         log.debug("disconnect");
-        onlineMembersSet.forEach(e -> log.debug(e)); //測試剩餘線上人數
+        onlineMembersSet.forEach(e -> log.debug(e)); //測試顯示剩餘線上成員
 
         //推送線上人數給client
         res = ChatgroundMessage.builder()

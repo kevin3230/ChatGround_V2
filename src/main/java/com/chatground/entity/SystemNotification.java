@@ -12,6 +12,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 /**
+ * 此表格尚未用到
  * 系統推播
  */
 @Entity

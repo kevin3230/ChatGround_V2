@@ -10,7 +10,7 @@
             $("#area").append($("<li>").text(messages[lang].chatground_welcome));
             $("#text_submit").prop("disabled", false);
             stompClient.subscribe('/topic/getResponse', function(response){
-                // console.log("response success: " + response);
+                //console.log("response success: " + response);
                 showMessage(response);
             });
             //取得線上人數onlinecounter

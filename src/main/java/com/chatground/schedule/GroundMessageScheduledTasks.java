@@ -35,7 +35,7 @@ public class GroundMessageScheduledTasks {
         log.info("start GroundMessageScheduledTasks");
 
         ObjectMapper objectMapper = new ObjectMapper();
-        Long startTime = System.nanoTime();
+//        Long startTime = System.nanoTime();
         GroundMessage message;
         List<GroundMessage> list = new LinkedList<>();  //batch insert GroundMessage使用
 

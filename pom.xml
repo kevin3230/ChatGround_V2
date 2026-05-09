@@ -128,11 +128,11 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-<!--		讀取jar檔js-->
+<!--		讀取jar檔js，自動匹配webjars版本-->
 		<dependency>
-			<groupId>org.webjars</groupId>
-			<artifactId>webjars-locator-core</artifactId>
-		</dependency>
+	        <groupId>org.webjars</groupId>
+	        <artifactId>webjars-locator-lite</artifactId>
+	    </dependency>
 <!--		前端websocket-js-->
 		<dependency>
 			<groupId>org.webjars</groupId>
@@ -151,6 +151,13 @@
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
 			<optional>true</optional>
+		</dependency>
+<!--		資料庫連線資訊加解密工具	-->
+<!-- 		Source: https://mvnrepository.com/artifact/com.github.ulisesbocchio/jasypt-spring-boot-starter -->
+		<dependency>
+		    <groupId>com.github.ulisesbocchio</groupId>
+		    <artifactId>jasypt-spring-boot-starter</artifactId>
+		    <version>3.0.5</version>
 		</dependency>
     </dependencies>
 
