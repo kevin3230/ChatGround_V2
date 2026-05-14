@@ -73,7 +73,7 @@ public class MemberController {
     @RequestMapping(method = RequestMethod.POST, value = "/signup")
     public String signUp(@Valid Member member, BindingResult bindingResult, @RequestParam(value="mem_pic")MultipartFile picFile, RedirectAttributes attr, Model model){
 
-        log.debug(String.valueOf(bindingResult.hasErrors()));
+        log.debug("BindingResult.hasErrors: " + String.valueOf(bindingResult.hasErrors()));
 
         if(bindingResult.hasErrors()){
             return "member/MembersSignUp";
@@ -81,7 +81,7 @@ public class MemberController {
 
         List<String> errorMessages = new ArrayList<>();
 
-        log.debug(member.toString());
+        log.debug("Member content: " + member.toString());
         
 
         //驗證圖片格式

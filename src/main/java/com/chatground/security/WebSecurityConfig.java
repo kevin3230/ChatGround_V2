@@ -70,6 +70,7 @@ public class WebSecurityConfig {
 	        	.requestMatchers("/chatground/**").access((authentication, context) ->
 		        	new AuthorizationDecision(rbacService.hasPermission(context.getRequest(), authentication.get())))
 		        .requestMatchers("/index", "/", "/favicon.ico").permitAll()
+		        .requestMatchers("/initializeWebSite", "/initializeWebSite_result").anonymous()
 		        .requestMatchers("/redis/**").permitAll()
 		        //除上面外的所有請求全部需要驗證認證
         		.anyRequest().authenticated());
@@ -94,7 +95,7 @@ public class WebSecurityConfig {
         //記住我功能
         http.rememberMe((config) -> config
 	  		.rememberMeParameter("rememberme").key("uniqueAndSecret")
-	  		.tokenValiditySeconds(86400));
+	  		.tokenValiditySeconds(86400));	//時效一天
 
       	//設定開啟CSRF保護預防攻擊
 //      http.csrf().ignoringAntMatchers("/member/upload");

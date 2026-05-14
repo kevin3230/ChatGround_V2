@@ -1,6 +1,5 @@
 package com.chatground.controller;
 
-import com.chatground.entity.Member;
 import com.chatground.security.UserPrincipal;
 
 import org.springframework.security.core.Authentication;
@@ -27,9 +26,6 @@ public class ChatgroundController {
             	UserPrincipal userPrincipal = (UserPrincipal)user;
             	member_id = String.valueOf(userPrincipal.getId());
                 member_nickname = String.valueOf(userPrincipal.getNickName());
-//                Member member = (Member)user;
-//                member_id = String.valueOf(member.getId());
-//                member_nickname = String.valueOf(member.getNickName());
             }
         }
         model.addAttribute("member_id", member_id);

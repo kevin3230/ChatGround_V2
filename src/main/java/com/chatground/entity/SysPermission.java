@@ -20,14 +20,14 @@ public class SysPermission {
     private String resourceType;
     private String url;//資源路徑
 
-    //權限字串以|分隔,例如menu: role:*,button: role:create, role:update, role:delete, role:view
+    //權限字串以|分隔,例如menu: role:*|button: role:create, role:update, role:delete, role:view
     private String permission;
 
     private long parentId;//父編號
 
     private String parentIds;//父編號列表
 
-    private Boolean available = false;
+    private Boolean available = false;//狀態:啟用或停用
 
     @Transient
     private List<String> permissions;

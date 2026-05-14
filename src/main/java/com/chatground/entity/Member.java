@@ -89,7 +89,6 @@ public class Member{
      */
     @Column
     @Past
-    @NotNull
     private Date birth;
 
     /**
@@ -124,7 +123,7 @@ public class Member{
     /**
      *頭像
      */
-    @Column(length=1048576) //檔案大小10MB，DDL自動判斷column type mediumBLOB
+    @Column(length=10485760) //檔案大小10MB，DDL自動判斷column type 
     private byte[] picture;
 
     /**

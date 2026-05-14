@@ -3,7 +3,6 @@ package com.chatground.security;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,8 +25,8 @@ public class UserPrincipal implements UserDetails{
         this.nickName = user.getNickName();
     }
 	
-	public String getId() {
-		return String.valueOf(user.getId());
+	public long getId() {
+		return user.getId();
 	}
 	
 	public String getNickName(){

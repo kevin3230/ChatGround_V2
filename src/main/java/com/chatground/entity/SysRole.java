@@ -16,6 +16,9 @@ public class SysRole {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    /*
+     * common name
+     */
     private String cnName;
 
     @Column(nullable = false)
