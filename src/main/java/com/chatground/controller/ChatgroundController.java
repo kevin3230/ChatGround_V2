@@ -1,6 +1,7 @@
 package com.chatground.controller;
 
-import com.chatground.entity.Member;
+import com.chatground.security.UserPrincipal;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -14,17 +15,17 @@ public class ChatgroundController {
 
     @GetMapping("/ground")
     public String chatground(Model model, Authentication authentication){
-        String member_id = "not an mem_id";
-        String member_nickname = "not found nickname";
+        String member_id = "not a mem_id";
+        String member_nickname = "nickname not found";
         Object principal = authentication.getPrincipal();
 
         //取得使用者身分
         if(principal instanceof UserDetails){
             UserDetails user = (UserDetails) principal;
-            if(user instanceof Member){
-                Member member = (Member)user;
-                member_id = String.valueOf(member.getId());
-                member_nickname = String.valueOf(member.getNickName());
+            if(user instanceof UserPrincipal){
+            	UserPrincipal userPrincipal = (UserPrincipal)user;
+            	member_id = String.valueOf(userPrincipal.getId());
+                member_nickname = String.valueOf(userPrincipal.getNickName());
             }
         }
         model.addAttribute("member_id", member_id);

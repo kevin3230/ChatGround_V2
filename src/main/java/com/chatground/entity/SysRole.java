@@ -2,8 +2,12 @@ package com.chatground.entity;
 
 import lombok.Data;
 
-import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
+
+import com.chatground.utility.Role;
+
+import jakarta.persistence.*;
 
 @Data
 @Entity
@@ -12,10 +16,14 @@ public class SysRole {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    /*
+     * common name
+     */
     private String cnName;
 
-    @Column(nullable = false, columnDefinition = "enum('ROLE_ADMIN', 'ROLE_USER')")
-    private String role;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)	//enum("ADMIN", "USER")
+    private Role role;
 
     private String description;
 
@@ -24,9 +32,7 @@ public class SysRole {
     /**
      * 會員與角色對應
      */
-    @ManyToMany
-    @JoinTable(name="member_sysrole", joinColumns = {@JoinColumn(name="role_id")},
-    inverseJoinColumns = {@JoinColumn(name="mem_id")})
+    @ManyToMany(mappedBy = "sysRoleList")
     private List<Member> memberList;
 
     /**
@@ -35,7 +41,7 @@ public class SysRole {
     @ManyToMany(fetch=FetchType.EAGER)
     @JoinTable(name="SysRolePermission", joinColumns={@JoinColumn(name="role_id")},
     inverseJoinColumns={@JoinColumn(name="permission_id")})
-    private List<SysPermission> sysPermissionList;
+    private Set<SysPermission> sysPermissionList;
 
 
 }

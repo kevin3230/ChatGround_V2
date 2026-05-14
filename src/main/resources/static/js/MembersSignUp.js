@@ -1,4 +1,6 @@
-var submitFlag = true;
+var submitFlag = false;
+var isAccountValid = false;
+var isEmailValid = false;
 var token = $("meta[name='_csrf']").attr("content");
 var header = $("meta[name='_csrf_header']").attr("content");
 
@@ -16,14 +18,24 @@ function checkAccount(){
         },
         success: function(data) {
             var obj = JSON.parse(data);
+			let reg = /^\w+$/;
+			let account= $("#account").val();
             // console.log(obj);
             if(false === obj.error){
-                if(true === obj.unique){
-                    $("#account_hint").text("此帳號可以使用");
-                    submitFlag = true;
+				if(reg.test(account) === false){
+					$("#account_hint").text(messages[lang].memberSignUp_account_format_error);
+					submitFlag = false;
+					isAccountValid = false;
+				}else if(true === obj.unique){
+                    $("#account_hint").text(messages[lang].memberSignUp_account_available);
+					isAccountValid = true;
+					if(isAccountValid && isEmailValid){
+	                    submitFlag = true;
+					}
                 }else{
-                    $("#account_hint").text("此帳號已被使用");
+                    $("#account_hint").text(messages[lang].memberSignUp_account_not_available);
                     submitFlag = false;
+					isAccountValid = false;
                 }
             }else{
                 submitFlag = false;
@@ -51,14 +63,25 @@ function checkEmail(){
         },
         success: function(data) {
             var obj = JSON.parse(data);
-            // console.log(obj);
+			var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+			var email= $("#email").val();
+            //console.log(obj);
             if(false === obj.error){
-                if(true === obj.unique){
-                    $("#email_hint").text("此信箱可以使用");
-                    submitFlag = true;
+				if(reg.test(email) === false){
+					$("#email_hint").text(messages[lang].memberSignUp_email_format_error);
+					submitFlag = false;
+					isEmailValid = false;
+				}else if(true === obj.unique){
+                    $("#email_hint").text(messages[lang].memberSignUp_email_available);
+					isEmailValid = true;
+					if(isAccountValid && isEmailValid) {
+	                    submitFlag = true;
+					}
+					
                 }else{
-                    $("#email_hint").text("此信箱已被使用");
+                    $("#email_hint").text(messages[lang].memberSignUp_email_not_available);
                     submitFlag = false;
+					isEmailValid = false;
                 }
             }else{
                 submitFlag = false;
@@ -76,7 +99,9 @@ function addAccountListener(){
     $("#account").blur(function(){
         if($("#account").val().trim() != ""){
             checkAccount();
-        }
+        }else{//清除錯誤訊息
+			$("#account_hint").text("");
+		}
     });
 }
 
@@ -84,7 +109,9 @@ function addEmailListener(){
     $("#email").blur(function(){
         if($("#email").val().trim() != ""){
             checkEmail();
-        }
+        }else{//清除錯誤訊息
+			$("#email_hint").text("");
+		}
     });
 }
 
@@ -92,20 +119,20 @@ function addSubmitListener(){
     $("form").submit(function(e){
         checkAccount();
         checkEmail();
-
+		
         if(submitFlag == false || !confirmPwd()){
             e.preventDefault();
-            alert("請確認填寫格式正確");
+            alert(messages[lang].memberSignUp_confirm_format);
         }
     });
 }
 
 function confirmPwd(){
     if($("#pwd1").val() === $("#pwd2").val()){
-        $("#pwd_hint").text("密碼相同");
+        $("#pwd_hint").text(messages[lang].memberSignUp_password_identical);
         return true;
     }else{
-        $("#pwd_hint").text("密碼不同");
+        $("#pwd_hint").text(messages[lang].memberSignUp_password_different);
         return false;
     }
 }
@@ -128,8 +155,9 @@ function restrictMaxDate(){ //生日不可大於等於今天
         mm = '0' + mm;
     }
     today = yyyy + '-' + mm + '-' + dd;
-    $("#birthday").attr("max", today);
+    $("#birth").attr("max", today);
 }
+
 
 function previewMem_pic(){
     $("#mem_pic").change(function(){
@@ -155,7 +183,7 @@ function previewMem_pic(){
                 });
                 reader.readAsDataURL(file);
             }else{
-                alert("請上傳圖片");
+                alert(messages[lang].memberSignUp_upload_picture);
             }
         }else{
             $("#previewMem_pic").empty();  //清空圖片

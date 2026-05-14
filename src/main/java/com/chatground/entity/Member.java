@@ -1,26 +1,38 @@
 package com.chatground.entity;
 
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.util.List;
+import java.util.Set;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.chatground.utility.Gender;
+import com.chatground.utility.MemberStatus;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Past;
-import javax.validation.constraints.Size;
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 
 /**
  * 會員
@@ -31,9 +43,9 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Member implements UserDetails {
+public class Member{
 
-    /**
+	/**
      *會員編號
      */
     @Id
@@ -69,6 +81,7 @@ public class Member implements UserDetails {
     @Column(nullable = false, unique = true)
     @NotEmpty(message = "Email不可為空")
     @Size(max = 30)
+    @Email
     private String email;
 
     /**
@@ -81,9 +94,9 @@ public class Member implements UserDetails {
     /**
      *性別
      */
-    @Column(columnDefinition = "enum('X','男','女')")
-    @Size(max = 1)
-    private String gender;
+    @Column
+    @Enumerated(EnumType.STRING)	//enum(X("X"),MALE("男"),FEMALE("女"))
+    private Gender gender;
 
     /**
      *註冊日期
@@ -96,19 +109,21 @@ public class Member implements UserDetails {
     /**
      *帳號狀態(封鎖,正常)
      */
-    @Column(nullable = false, columnDefinition = "enum('locked', 'active')")
-    private String status;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)	//enum("locked", "active")
+    private MemberStatus status;
 
     /**
      *角色(管理員, 使用者)
      */
-//    @Column(nullable = false, columnDefinition = "enum('ADMIN', 'USER')")
-//    private String role;
+//    @Column(nullable = false)
+//    @Enumerated(EnumType.STRING)	//enum("ADMIN", "USER")
+//    private Role role;
 
     /**
      *頭像
      */
-    @Column(length=1048576) //檔案大小10MB，ddl自動判斷column type mediumBLOB
+    @Column(length=10485760) //檔案大小10MB，DDL自動判斷column type 
     private byte[] picture;
 
     /**
@@ -122,49 +137,9 @@ public class Member implements UserDetails {
     /**
      * 角色
      */
-    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @ManyToMany(fetch=FetchType.EAGER)
     @JoinTable(name="member_sysrole", joinColumns = {@JoinColumn(name="mem_id")},
     inverseJoinColumns = {@JoinColumn(name="role_id")})
     private List<SysRole> sysRoleList;
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities(){
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        List<SysRole> roleList = this.getSysRoleList();
-        for(SysRole role: roleList){
-            authorities.add(new SimpleGrantedAuthority(role.getRole()));
-        }
-        return authorities;
-    }
-
-    @Override
-    public boolean isAccountNonExpired(){
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked(){
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired(){
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled(){
-        return true;
-    }
-
-    @Override
-    public String getUsername(){
-        return account;
-    }
-
-    @Override
-    public String getPassword(){
-        return password;
-    }
 
 }

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <title>result</title>
+    <link rel="stylesheet" th:href="@{/utility/css/bootstrap.min.css}" href="../utility/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/NavBar.css}" href="../css/NavBar.css">
+    <link rel="shortcut icon" th:href="@{/favicon.ico}" href="../../favicon.ico" />
+</head>
+<body>
+    <div th:replace="~{index/NavBar :: navBar}" ></div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-10">
+                <div th:each="member: ${member}">
+                    <span th:text="'Dear ' + ${member.nickName} + #{signup.success.message}"></span>
+                </div>
+                <p th:text="#{profile.picture}"></p>
+                <img th:if="${mem_pic != null}" th:src="'data:img/png;base64,' + ${mem_pic}" style="width: 30%; height: auto">
+            	<p th:if="${mem_pic == null}" th:text="#{profile.picture.not.upload}"></p>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/utility/js/jquery-3.5.1.min.js}" src="../utility/js/jquery-3.5.1.min.js"></script>
+    <script th:src="@{/utility/js/popper.min.js}" src="../utility/js/popper.min.js"></script>
+    <script th:src="@{/utility/js/bootstrap.min.js}" src="../utility/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -5,19 +5,21 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.*;
-import javax.validation.constraints.Size;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
+
 import java.sql.Date;
 import java.sql.Timestamp;
 
 /**
+ * 此表格尚未用到
  * 系統推播
  */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Data
-@Table(name = "system_notice")
-public class SystemNotice {
+@Table(name = "system_notification")
+public class SystemNotification {
 
     /**
      *推播編號

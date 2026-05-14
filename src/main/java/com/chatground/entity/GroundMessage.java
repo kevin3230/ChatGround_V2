@@ -3,9 +3,9 @@ package com.chatground.entity;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.*;
-import javax.validation.constraints.Size;
-import java.io.Serializable;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
+
 import java.sql.Timestamp;
 
 
