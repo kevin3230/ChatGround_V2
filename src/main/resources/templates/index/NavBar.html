@@ -9,18 +9,19 @@
 	<div th:fragment="navBar" class="container-fluid navBar">
 		<div class="row justify-content-between">
 			<div class="col-1" >
-				<a href="/index">首頁</a>
+				<a href="/index" th:text="#{homepage}"></a>
 			</div>
 			<div class="col-auto">
-				<a sec:authorize="isAuthenticated()" th:href="@{/chatground/ground}">聊天室</a>
+				<a sec:authorize="isAuthenticated()" th:href="@{/chatground/ground}" th:text="#{chatroom}"></a>
 
-				<a sec:authorize="isAnonymous()" th:href="@{/member/signup}">註冊</a>
+				<a sec:authorize="isAnonymous()" th:href="@{/member/signup}" th:text="#{signup}"></a>
 
-				<a sec:authorize="isAnonymous()" th:href="@{/member/login}">登入</a>
+				<a sec:authorize="isAnonymous()" th:href="@{/member/login}" th:text="#{login}"></a>
 
 				<span sec:authorize="isAuthenticated()" >
-					歡迎 <span sec:authentication="principal.nickName"></span>
-					<a th:href="@{/member/logout_confirm}">登出</a>
+					<span th:text="#{welcome}"></span>
+					<span sec:authentication="principal.nickName"></span>
+					<a th:href="@{/member/logout_confirm}" th:text="#{logout}"></a>
 				</span>
 
 			</div>

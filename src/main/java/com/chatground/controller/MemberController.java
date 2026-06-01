@@ -2,14 +2,20 @@ package com.chatground.controller;
 
 import com.chatground.dto.AccountAndEmail;
 import com.chatground.entity.Member;
-import com.chatground.entity.SysRole;
 import com.chatground.repository.MemberRepository;
 import com.chatground.repository.SysRoleRepository;
 import com.chatground.service.MemberService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import com.chatground.utility.LanguageUtils;
+import com.chatground.utility.MemberStatus;
+import com.chatground.utility.Role;
+
+import jakarta.validation.Valid;
+import tools.jackson.databind.ObjectMapper;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.context.MessageSource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,24 +25,30 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Set;
 
-@Slf4j
+
 @Controller
 @RequestMapping("/member")
 public class MemberController {
+	
+	private static final Logger log = LoggerFactory.getLogger(MemberController.class);
 
+	@Autowired
+	private PasswordEncoder passwordEncoder;
     @Autowired
     MemberService memberService;
     @Autowired
     MemberRepository memberRepository;
     @Autowired
     SysRoleRepository sysRoleRepository;
-
+    @Autowired
+	private MessageSource messageSource;
+    
     /**
      * 註冊頁面
      * @param model
@@ -61,7 +73,7 @@ public class MemberController {
     @RequestMapping(method = RequestMethod.POST, value = "/signup")
     public String signUp(@Valid Member member, BindingResult bindingResult, @RequestParam(value="mem_pic")MultipartFile picFile, RedirectAttributes attr, Model model){
 
-//        System.out.println(bindingResult.hasErrors());
+        log.debug("BindingResult.hasErrors: " + String.valueOf(bindingResult.hasErrors()));
 
         if(bindingResult.hasErrors()){
             return "member/MembersSignUp";
@@ -69,17 +81,18 @@ public class MemberController {
 
         List<String> errorMessages = new ArrayList<>();
 
-//        System.out.println(member);
+        log.debug("Member content: " + member.toString());
+        
 
         //驗證圖片格式
         if( !picFile.isEmpty()){    //判斷圖片檔案是否存在
             String picType = picFile.getContentType();
             if(!"image/png".equals(picType) && !"image/jpeg".equals(picType)){
-                errorMessages.add("圖片格式錯誤");
+                errorMessages.add(messageSource.getMessage("profile.picture.extension.mismatched", null, LanguageUtils.getLocale()));
                 model.addAttribute("errorMessages", errorMessages);
                 return "member/MembersSignUp";
-            }else if(picFile.getSize() > 10240000L){
-                errorMessages.add("圖片大小超過10mb");
+            }else if(picFile.getSize() > 10240000L){	//圖片大小限制10mb
+                errorMessages.add(messageSource.getMessage("profile.picture.oversize", new Object[]{"10"}, LanguageUtils.getLocale()));
                 model.addAttribute("errorMessages", errorMessages);
                 return "member/MembersSignUp";
             }else{
@@ -91,11 +104,18 @@ public class MemberController {
             }
         }
 
-        PasswordEncoder pwEncoder = new BCryptPasswordEncoder();
-        member.setPassword(pwEncoder.encode(member.getPassword()));
-        member.setStatus("active");
-        member.setSysRoleList(List.of(sysRoleRepository.findByRole("ROLE_USER")));  //設定角色為USER
-        memberRepository.save(member);
+        member.setPassword(passwordEncoder.encode(member.getPassword()));
+        member.setStatus(MemberStatus.ACTIVE);
+        member.setSysRoleList(List.of(sysRoleRepository.findByRole(Role.USER)));  //設定角色為USER
+        try {
+        	memberRepository.save(member);
+        }catch(Exception e) {
+        	log.info("MemberRepository save member failed. ", e);
+        	
+        	errorMessages.add(messageSource.getMessage("save.member.failed", null, LanguageUtils.getLocale()));
+            model.addAttribute("errorMessages", errorMessages);
+        	return "member/MembersSignUp";
+        }
 
         //在註冊成功頁面顯示大頭照
         if(member.getPicture() != null){
@@ -105,16 +125,16 @@ public class MemberController {
 
         attr.addFlashAttribute("member", member);
 
-        return "redirect:/member/result";
+        return "redirect:/member/signup_result";
     }
 
     /**
      * 註冊成功頁面
      * @return
      */
-    @GetMapping("/result")
-    public String result(){
-        return "member/result";
+    @GetMapping("/signup_result")
+    public String signupResult(){
+        return "member/signup_result";
     }
 
 
@@ -146,7 +166,7 @@ public class MemberController {
         accountAndEmail = new AccountAndEmail();
         accountAndEmail.setUnique(false);
         accountAndEmail.setError(true);
-        accountAndEmail.setMessage("query format incorrect");
+        accountAndEmail.setMessage("Query format incorrect.");
         return mapper.writeValueAsString(accountAndEmail);
     }
 

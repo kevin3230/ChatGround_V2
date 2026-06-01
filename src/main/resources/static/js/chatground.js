@@ -7,15 +7,15 @@
         stompClient.connect({},function(data){
             // console.log("Connected success: " + data);
             $("#area").html(""); //清空對話框
-            $("#area").append($("<li>").text("歡迎來到聊天廣場，在這裡可以暢所欲言"));
+            $("#area").append($("<li>").text(messages[lang].chatground_welcome));
             $("#text_submit").prop("disabled", false);
             stompClient.subscribe('/topic/getResponse', function(response){
-                // console.log("response success: " + response);
+                //console.log("response success: " + response);
                 showMessage(response);
             });
             //取得線上人數onlinecounter
             let jsonObj = {
-                "sender": self
+				"jwt": jwt
             };
             stompClient.send("/server/open", {}, JSON.stringify(jsonObj));
         });
@@ -44,9 +44,9 @@
             textarea.focus();
         } else {
             var jsonObj = {
-                "sender": self,
                 "senderNickname": selfNickname,
-                "message": message
+                "message": message,
+				"jwt": jwt
             };
             stompClient.send("/server/chat", {}, JSON.stringify(jsonObj));
         }
@@ -57,7 +57,7 @@
     function disconnect() {
         if(stompClient != null){
             let jsonObj = {
-                "sender": self
+				"jwt": jwt
             };
             stompClient.send("/server/close", {}, JSON.stringify(jsonObj));
             stompClient.disconnect();
@@ -84,15 +84,15 @@
         //限制輸入框字數400字以內
         $("textarea").bind('input propertychange', function(){
             let textarea = $("textarea");
-            if(textarea.val().length >400){
-                textarea.val(textarea.val().substring(0, 400));
+            if(textarea.val().length > textareaCharNumberLimit){
+                textarea.val(textarea.val().substring(0, textareaCharNumberLimit));
             }
         });
     }
 
     $(document).ready(function() {
         $("#text_submit").prop("disabled", true);
-        $("#area").append($("<li>").text("連線中..."));
+        $("#area").append($("<li>").text(messages[lang].chatground_connect));
         scrollBottom();
         addListener();
         connect();

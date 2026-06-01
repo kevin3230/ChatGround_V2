@@ -1,57 +1,33 @@
 package com.chatground.schedule;
 
-import com.chatground.entity.GroundMessage;
-import com.chatground.repository.GroundMessageRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import com.chatground.redis.RedisService;
 
 /**
- * 排程將redis的ground聊天訊息存入MySQL
+ * 排程將Redis的ground聊天訊息存入資料庫
  */
-@Slf4j
 @Component
 public class GroundMessageScheduledTasks {
+	
+	private static final Logger log = LoggerFactory.getLogger(GroundMessageScheduledTasks.class);
 
     @Autowired
-    private GroundMessageRepository groundMessageRepository;
-
-    @Autowired
-    private StringRedisTemplate stringRedisTemplate;
+    private RedisService redisService;
 
     @Scheduled(cron = "0 0 2 ? * *") //每天2:00執行
     public void syncGroundMessage(){
 
-        log.info("start GroundMessageScheduledTasks");
+        log.info("Start GroundMessageScheduledTasks.");
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        Long startTime = System.nanoTime();
-        GroundMessage message;
-        List<GroundMessage> list = new LinkedList();  //batch insert GroundMessage使用
+        //每日定期檢查如果List長度超過triggerAmount，將最新reservedAmount則以前的舊訊息存到RDB，歷史訊息只保留reservedAmount 則訊息
+        redisService.saveGroundMessageToRelationDBDefault();
 
-        long messageCount = stringRedisTemplate.opsForList().size("message:chatground");
-        try{
-            for(long i = 0; i < messageCount; i++){
-                String value = stringRedisTemplate.opsForList().leftPop("message:chatground");
-                message = objectMapper.readValue(value, GroundMessage.class);
-//                groundMessageRepository.save(message);
-                list.add(message);
-            }
-            groundMessageRepository.saveAll(list);
-        }catch (JsonProcessingException e){
-            log.info("parsing JsonString to ChatGround error: {}", e);
-        }
-
-        log.info("finished GroundMessageScheduledTasks");
+        log.info("Finished GroundMessageScheduledTasks.");
     }
 
 }
