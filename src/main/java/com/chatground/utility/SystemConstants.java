@@ -11,5 +11,6 @@ public class SystemConstants {
 	//次要分類:初始化
 	public static final String TYPE_INITIALIZATION = "INIT";
 	
-	
+	//群體聊天室Chatground對話框限制字數
+	public static final int CHATGROUND_TEXTAREA_CHAR_NUMBER_LIMIT = 400;
 }

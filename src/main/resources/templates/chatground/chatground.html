@@ -21,7 +21,7 @@
                     </ul>
                 </div>
                 <div class="col-10 px-0">
-                    <textarea class="form-control col-9 float-left" rows="1" th:placeholder="#{please.type.message}"></textarea>
+                    <textarea class="form-control col-9 float-left" id="chat_textarea" rows="1" th:placeholder="#{please.type.message}"></textarea>
                     <button class="btn btn-secondary col-auto mx-1 my-0" id="text_submit" th:text="#{send}"></button>
                 </div>
                 <div class="col-10 row px-0">
@@ -39,8 +39,10 @@
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
 	<script th:inline="javascript">
 	
-	    var self = [[${member_id}]];
+		var textareaCharNumberLimit = [[${textareaCharNumberLimit}]];
 	    var selfNickname = [[${member_nickname}]];
+	    var jwt = [[${jwt}]];
+	    //console.log('jwt:' + jwt);
 
 	</script>
     <script th:src="@{/js/i18n.js}" src="../js/i18n.js"></script>

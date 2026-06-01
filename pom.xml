@@ -159,6 +159,28 @@
 		    <artifactId>jasypt-spring-boot-starter</artifactId>
 		    <version>3.0.5</version>
 		</dependency>
+<!--		JWT library jjwt	-->
+<!--		Source: https://github.com/jwtk/jjwt	-->
+<!-- 		API 介面 -->
+		<dependency>
+		    <groupId>io.jsonwebtoken</groupId>
+		    <artifactId>jjwt-api</artifactId>
+		    <version>0.13.0</version>
+		</dependency>
+<!-- 		實作層（runtime） -->
+		<dependency>
+		    <groupId>io.jsonwebtoken</groupId>
+		    <artifactId>jjwt-impl</artifactId>
+		    <version>0.13.0</version>
+		    <scope>runtime</scope>
+		</dependency>
+<!-- 		Jackson 序列化支援（runtime） -->
+		<dependency>
+		    <groupId>io.jsonwebtoken</groupId>
+		    <artifactId>jjwt-jackson</artifactId> <!-- or jjwt-gson if Gson is preferred -->
+		    <version>0.13.0</version>
+		    <scope>runtime</scope>
+		</dependency>
     </dependencies>
 
 	<build>

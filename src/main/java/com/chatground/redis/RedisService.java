@@ -3,7 +3,9 @@ package com.chatground.redis;
 import com.chatground.dto.ChatgroundMessage;
 import com.chatground.entity.GroundMessage;
 import com.chatground.repository.GroundMessageRepository;
+import com.chatground.utility.JwtUtil;
 
+import io.jsonwebtoken.Claims;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 
@@ -27,6 +29,8 @@ public class RedisService {
     private StringRedisTemplate stringRedisTemplate;
     @Autowired
     private GroundMessageRepository groundMessageRepository;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     private ObjectMapper objectMapper = new ObjectMapper();
     
@@ -35,8 +39,22 @@ public class RedisService {
 
     public void saveMessage(ChatgroundMessage req){
         String key = "message:chatground";
+        
+        String jwt = req.getJwt();
+        String sender = "";
+        
+        try {
+        	Claims claims = jwtUtil.parseToken(jwt);
+        	sender = claims.get("sender", String.class);
+        	
+        }catch (Exception e) {
+        	log.info("parsing jwt token error :{}", e);
+		}
+        
+        
+        
         GroundMessage messageDto = new GroundMessage();
-        messageDto.setSender(Long.valueOf(req.getSender()));
+        messageDto.setSender(Long.valueOf(sender));
         messageDto.setContent(req.getMessage());
         messageDto.setTime(Timestamp.valueOf(LocalDateTime.now()));
 
@@ -50,7 +68,7 @@ public class RedisService {
         
         try {
         	//檢查如果List長度超過triggerAmount，將最新reservedAmount則以前的舊訊息存到RDB，歷史訊息只保留reservedAmount則訊息
-        	saveGroundMessageToRelativeDBDefault();
+        	saveGroundMessageToRelationDBDefault();
         	
         }catch (Exception e) {
         	log.info("saveGroundMessageToRelativeDBDefault error :{}", e);
@@ -58,7 +76,7 @@ public class RedisService {
     }
     
 	//如果List長度超過triggerAmount，將最新reservedAmount 則以前的舊訊息存到RDB，歷史訊息只保留reservedAmount則訊息
-    public boolean saveGroundMessageToRelativeDB(int triggerAmount, int reservedAmount) {
+    public boolean saveGroundMessageToRelationDB(int triggerAmount, int reservedAmount) {
     	boolean isSuccess = false;
     	String key = "message:chatground";
     	long groundMessageListSize = stringRedisTemplate.opsForList().size(key).longValue();
@@ -109,7 +127,7 @@ public class RedisService {
     }
     
     //預設如果List長度超過100，將最新30則以前的舊訊息存到RDB，歷史訊息只保留30則
-    public boolean saveGroundMessageToRelativeDBDefault() {
-    	return saveGroundMessageToRelativeDB(DEFAULT_TRIGGER_AMOUNT, DEFAULT_RESERVED_AMOUNT);
+    public boolean saveGroundMessageToRelationDBDefault() {
+    	return saveGroundMessageToRelationDB(DEFAULT_TRIGGER_AMOUNT, DEFAULT_RESERVED_AMOUNT);
     }
 }

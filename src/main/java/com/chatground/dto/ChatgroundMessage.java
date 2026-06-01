@@ -15,4 +15,5 @@ public class ChatgroundMessage {
     private String senderNickname;
     private String message;
     private Integer onlineCounter;
+    private String jwt;
 }
