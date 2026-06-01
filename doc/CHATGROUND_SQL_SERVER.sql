@@ -1,21 +1,6 @@
 --#使用cmd建立MySQL DB
 --create database chatground;
 
---表格建好後執行下列sql
---#sys_role，在MS SQL因為設定了PK的identity所以不須指定id
-insert into sys_role (icn_name, role, available, description) values('admin', 'ADMIN', 1 , null);
-insert into sys_role (cn_name, role, available) values('user', 'USER', 1);
-
---#sys_permission，在MS SQL因為設定了PK的identity所以不須指定id
-insert into sys_permission (available, name, parent_id, parent_ids, permission, resource_type, url)
-values(1, '/chatground/ground', 0, null, 'ground', 'menu', '/chatground/ground');
---#sys_role_permission，須確保role_id對應到USER及ADMIN，permission_id對應到name='/chatground/ground'的資料
-insert into sys_role_permission (role_id, permission_id) values(1, 1);
-insert into sys_role_permission (role_id, permission_id) values(2, 1);
-
---重置sys_permission identity 時使用
---dbcc checkident('sys_permission', RESEED, 0);
-
 --#member_sysrole  有利用testMemberRepository.testSave新增會員才執行這行
 insert into member_sysrole (mem_id, role_id) values(1, 1);
 

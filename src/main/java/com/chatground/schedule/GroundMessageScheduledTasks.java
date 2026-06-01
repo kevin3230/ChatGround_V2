@@ -25,7 +25,7 @@ public class GroundMessageScheduledTasks {
         log.info("Start GroundMessageScheduledTasks.");
 
         //每日定期檢查如果List長度超過triggerAmount，將最新reservedAmount則以前的舊訊息存到RDB，歷史訊息只保留reservedAmount 則訊息
-        redisService.saveGroundMessageToRelativeDBDefault();
+        redisService.saveGroundMessageToRelationDBDefault();
 
         log.info("Finished GroundMessageScheduledTasks.");
     }

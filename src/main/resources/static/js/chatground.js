@@ -15,7 +15,7 @@
             });
             //取得線上人數onlinecounter
             let jsonObj = {
-                "sender": self
+				"jwt": jwt
             };
             stompClient.send("/server/open", {}, JSON.stringify(jsonObj));
         });
@@ -44,9 +44,9 @@
             textarea.focus();
         } else {
             var jsonObj = {
-                "sender": self,
                 "senderNickname": selfNickname,
-                "message": message
+                "message": message,
+				"jwt": jwt
             };
             stompClient.send("/server/chat", {}, JSON.stringify(jsonObj));
         }
@@ -57,7 +57,7 @@
     function disconnect() {
         if(stompClient != null){
             let jsonObj = {
-                "sender": self
+				"jwt": jwt
             };
             stompClient.send("/server/close", {}, JSON.stringify(jsonObj));
             stompClient.disconnect();
@@ -84,8 +84,8 @@
         //限制輸入框字數400字以內
         $("textarea").bind('input propertychange', function(){
             let textarea = $("textarea");
-            if(textarea.val().length >400){
-                textarea.val(textarea.val().substring(0, 400));
+            if(textarea.val().length > textareaCharNumberLimit){
+                textarea.val(textarea.val().substring(0, textareaCharNumberLimit));
             }
         });
     }
